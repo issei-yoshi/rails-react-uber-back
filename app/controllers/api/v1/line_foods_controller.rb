@@ -2,7 +2,7 @@ module Api
   module V1
     class LineFoodsController < ApplicationController
       # コールバックでset_foodをセットする
-      before_action :set_food, only: %i[create]
+      before_action :set_food, only: %i[create replace]
 
       def create
         # すでに仮注文に入っているfoodのresutaurantのidを元として
@@ -55,6 +55,27 @@ module Api
         end
       end
 
+      def replace
+        # active且つ他店舗のLineFoodモデルのデータの一つ一つのactiveカラムをfalseへと更新
+        # 他店舗のactiveなLineFood一覧
+        LineFood.active.other_restaurant(@ordered_food.restaurant.id).each do |line_food|
+          line_food.update(:active, false)
+        end
+
+        # set_line_food関数を実行してLineFoodのインスタンスを作成
+        set_line_food(@ordered_food)
+
+        # 成功したら@line_foodとstatusをcreated(201)で返す
+        if @line_food.save
+          render json: {
+            line_food: @line_food
+          }, status: :created
+        else
+          # 失敗時にはinternal_server_error(500)を返却
+          render json: {}, status: :internal_server_error
+        end
+      end
+
       private
 
       # food_idを元にFoodを一つ抽出して変数に格納
@@ -62,6 +83,7 @@ module Api
         @ordered_food = Food.find(params[:food_id])
       end
 
+      # LineFoodモデルを作成するメソッド
       def set_line_food(ordered_food)
         # ordered_foodがline_foodにすでに存在している場合
         if ordered_food.line_food.present?
