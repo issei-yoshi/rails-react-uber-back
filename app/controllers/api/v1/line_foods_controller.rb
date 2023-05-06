@@ -32,6 +32,29 @@ module Api
         end
       end
 
+      def index
+        # LineFoodモデルの中からactiveカラムがtrueのものを取得して代入
+        line_foods = LineFood.active
+        # LineFoodモデルの中にactiveカラムがtrueのものが存在する場合
+        if lineFoods.exists?
+          # JSON形式でデータを返却、statusもOK(200)で返す
+          render json: {
+            # LineFoodモデルに登録されているactiveなレコードのすべてのIDを配列にして返却
+            line_food_ids: line_foods.map { |line_food| line_food.id },
+            # LineFoodモデルに登録されているactiveなレコードの1つ目のrestaurant情報を返却
+            restaurant: line_foods[0].restaurant,
+            # 登録されているactiveなレコードのすべてのcountカラムを足し合わせてcountとして返却
+            count: line_foods.sum { |line_food| line_food[:count] },
+            # total_amountメソッドを用いて、登録されているactiveなレコードの合計金額をamountとして返却
+            amount: line_foods.sum { |line_food| line_food.total_amount },
+          }, status: :ok
+        else
+          # activeなLineFoodが存在しない場合にはstatus(204)を返す
+          # リクエストは成功しているが空データの場合のstatusコード
+          render json: {}, status: :no_content
+        end
+      end
+
       private
 
       # food_idを元にFoodを一つ抽出して変数に格納
