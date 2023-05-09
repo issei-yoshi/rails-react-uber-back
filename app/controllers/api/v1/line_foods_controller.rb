@@ -7,7 +7,7 @@ module Api
       def create
         # すでに仮注文に入っているfoodのresutaurantのidを元として
         # other_restaurantスコープを実行して、他店舗のLineFoodがある場合の処理を開始(trueの時に実行される)
-        if LineFood.active.other_restaurant(@ordered_food.restaurant.id)
+        if LineFood.active.other_restaurant(@ordered_food.restaurant.id).exists?
           return render json: {
             # すでに仮注文に入っているfoodのrestaurantのnameを返却
             existing_restaurant: LineFood.other_restaurant(@ordered_food.restaurant.id).first.restaurant.name,
@@ -59,7 +59,7 @@ module Api
         # active且つ他店舗のLineFoodモデルのデータの一つ一つのactiveカラムをfalseへと更新
         # 他店舗のactiveなLineFood一覧
         LineFood.active.other_restaurant(@ordered_food.restaurant.id).each do |line_food|
-          line_food.update(:active, false)
+          line_food.update(active: false)
         end
 
         # set_line_food関数を実行してLineFoodのインスタンスを作成
@@ -95,14 +95,14 @@ module Api
             active: true
           }
         else
-        # 上記当てはまらない場合はordered_foodを元に関連付けメソッドを用いてインスタンスを作成し、
-        # @line_foodというインスタンス変数に格納する
-        # has_one - belongs_toだとparent.build_childという関連付けメソッドを使える
-        @line_food = ordered_food.build_line_food(
-          count: params[:count],
-          restaurant: ordered_food.restaurant,
-          active: true
-        )
+          # 上記当てはまらない場合はordered_foodを元に関連付けメソッドを用いてインスタンスを作成し、
+          # @line_foodというインスタンス変数に格納する
+          # has_one - belongs_toだとparent.build_childという関連付けメソッドを使える
+          @line_food = ordered_food.build_line_food(
+            count: params[:count],
+            restaurant: ordered_food.restaurant,
+            active: true
+          )
         end
       end
     end
