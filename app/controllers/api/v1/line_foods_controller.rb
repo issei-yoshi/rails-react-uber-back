@@ -36,7 +36,7 @@ module Api
         # LineFoodモデルの中からactiveカラムがtrueのものを取得して代入
         line_foods = LineFood.active
         # LineFoodモデルの中にactiveカラムがtrueのものが存在する場合
-        if lineFoods.exists?
+        if line_foods.exists?
           # JSON形式でデータを返却、statusもOK(200)で返す
           render json: {
             # LineFoodモデルに登録されているactiveなレコードのすべてのIDを配列にして返却
