@@ -1,24 +1,10 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+UberEats風SPAをつくってみよう！
+【Rails×React】UberEats風アプリを作りながら、SPA開発を学ぼう|Techpit 
 
-Things you may want to cover:
+https://www.techpit.jp/courses/138/curriculums/141/sections/1044/parts/4128
 
-* Ruby version
+`rails version "~> 7.0.4", ">= 7.0.4.3"`
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+`ruby version "3.2.0"`
